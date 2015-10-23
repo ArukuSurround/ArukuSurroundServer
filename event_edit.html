@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>あるくさらうんど イベント追加</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="event_edit.css">
+    <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?sensor=TRUE"></script>
+  </head>
+  <body>
+    <div id="map_canvas"></div>
+	<div id="logo_container"><img id="logo" src="https://dl.dropboxusercontent.com/u/6674841/aruku_surround/image/title_logo.png"></div>
+    <div id="form_container">
+        
+        <ul>
+            <li><label>座標</label>
+                <ul>
+                    <li><label>緯度</label><input id="lat" type="text" value="" placeholder="35.646982" readonly="readonly"></li>
+                    <li><label>経度</label><input id="lng" type="text" value="" placeholder="140.036668" readonly="readonly"></li>
+                </ul>
+            </li>
+            <li>
+                <label>アイコン種類</label>
+                <select id="iconType">
+                    <option value="0">選択してください</option>
+                    <option value="1">桃　色</option>
+                    <option value="2">緑　色</option>
+                    <option value="3">黄緑色</option>
+                    <option value="4">水　色</option>
+                </select>
+            </li>
+            <li>
+                <label>イベント種類</label>
+                <select id="eventType">
+                    <option value="0">選択してください</option>
+                    <option value="1">メッセージ通知</option>
+                    <option value="2">笑顔を認識</option>
+                    <option value="3">2人連れを確認</option>
+                </select>
+            </li>
+            <li><label>メッセージ</label>
+                <textarea id="message" placeholder="通知メッセージ"></textarea>
+            </li>
+            <li class="button_container"><input id="btnCancel" class="btnCancel" type="button" value="Cancel">
+                <input id="btnSave" class="btnSave" type="button" value="Save"></li>
+        </ul>
+        
+        <input id="uid" type="hidden" value="">
+    </div>
+    <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="ncmb.min.js"></script>
+    <script src="common.js"></script>
+    <script src="event_edit.js"></script>
+  </body>
+</html>

@@ -1,0 +1,65 @@
+*{
+    margin:0;
+    padding:0;
+}
+
+body {
+    position: relative;
+    width:1000px;
+    height:100%;
+    background-color:#000;
+    display:block;
+    margin: 0 auto;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+#map_canvas {
+    position: absolute;
+    display:block;
+    width:1000px;
+    height:736px;
+    background-color:#c0c0c0;
+    
+    /*visibility:hidden;*/
+}
+
+#logo_container{
+    position: relative;
+    display:block;
+    width:200px;
+    margin-top:10px;
+    z-index: 100;
+    /*background-color:#cc0000;*/
+}
+
+#logo{
+    width:200px;
+}
+
+#char_container {
+    position: relative;
+    display:block;
+    width:100px;
+    height:200px;
+    margin:120px auto;
+}
+
+#char {
+    /* position: absolute; */
+    display:block;
+    width:100px;
+    height:100px;
+    background-repeat:no-repeat;
+    background-size:contain;
+    border:0;
+    background-image:url("https://dl.dropboxusercontent.com/u/6674841/aruku_surround/image/bocco_paird.png");
+}
+
+.char_left{
+    background-image:url("https://dl.dropboxusercontent.com/u/6674841/aruku_surround/image/bocco_left.png");
+}
+
+.char_right{
+    background-image:url("https://dl.dropboxusercontent.com/u/6674841/aruku_surround/image/bocco_right.png");
+}
