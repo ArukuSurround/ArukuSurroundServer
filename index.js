@@ -10,7 +10,7 @@ var Page = function( config ){
     
     //nifty mBaaS
     this.ncmb = new NCMB(this.config.NCMB_APPLICATION_KEY, this.config.NCMB_CLIENT_KEY);
-    console.log( this.ncmb );
+    //console.log( this.ncmb );
     
     //表示対象のログのUUID
     //TODO: どうにかしてアプリから受け取る
@@ -26,13 +26,13 @@ var Page = function( config ){
     this.map_zoom = 19;
     
     //検索範囲 km
-    this.range = 1;
+    this.range = 0.5;
     
     //最後のロケーション
     this.lastLocation = null;
     
     //マップチップのサイズ
-    this.mapChipSize = 41; //41
+    this.mapChipSize = 41;
     
 	//初期化
 	this.init = function(){
@@ -87,7 +87,7 @@ var Page = function( config ){
     
     //現在の位置情報を取得
     this.watchPositionSuccessFunc = function(position){
-        console.log(position);
+        //console.log(position);
         //進行方向 角度を取得
         var heading = position.coords.heading;
         if(heading != null){
@@ -104,7 +104,7 @@ var Page = function( config ){
     
     //現在位置の取得に成功
     this.locationSuccessFunc = function(position){
-    	console.log(position);
+    	//console.log(position);
     	var lat = position.coords.latitude;
     	var long = position.coords.longitude;
     	
@@ -135,7 +135,6 @@ var Page = function( config ){
         //MAPデータ読み出し
         var _this = this;
         
-        
         var WalkLog = this.ncmb.DataStore("WalkLog");
         var origin = new this.ncmb.GeoPoint(latitude, longitude);
         
@@ -145,8 +144,6 @@ var Page = function( config ){
                 .limit(50)
             　　 .fetchAll()
                 .then(function(walkLogs){
-                       console.log(walkLogs);
-                      
                         //ここでMAPを描画する
                         if(walkLogs.length == 0) return;
                       
@@ -169,6 +166,55 @@ var Page = function( config ){
                 .catch(function(err){
                        console.log(err);
                       });
+        
+        
+        //イベントアイコンを描画
+        $.proxy(this.showEventMap,this)(latitude,longitude,range);
+    };
+    
+    
+    //マーカーで表示
+    this.addEventMapChip = function(objectId,iconType,latitude,longitude){
+        var id = ("0"+iconType).slice(-2);
+        var icon_path = this.config.MAP_CHIP_DIR_URL+"e"+id+".png";
+        var size = this.mapChipSize;
+        var center = size/2;
+        var icon = new google.maps.MarkerImage( icon_path, new google.maps.Size(size,size), new google.maps.Point(0,0),new google.maps.Point(center,center));
+        var marker = new google.maps.Marker({position: new google.maps.LatLng(latitude, longitude),map:this.google_map,icon:icon});
+    };
+    
+    //MAPイベントアイコン 表示
+    this.showEventMap = function(latitude,longitude,range){
+        //MAPデータ読み出し
+        var _this = this;
+        
+        var MapEvent = this.ncmb.DataStore("MapEvent");
+        var origin = new this.ncmb.GeoPoint(latitude, longitude);
+        
+        MapEvent.withinKilometers("location", origin, range) //検索開始位置と範囲をキロメートルで指定
+        .limit(10)
+        .order("createDate",true)
+        　　　　　.fetchAll()
+        .then(function(mapEvents){
+              //console.log(mapEvents);
+              
+              //ここでMAPを描画する
+              if(mapEvents.length == 0) return;
+              
+              for(var i=0;i<mapEvents.length;i++){
+                console.log( mapEvents[i] );
+                var objectId  = mapEvents[i].objectId;
+                var iconType  = mapEvents[i].iconType;
+                var location  = mapEvents[i].location;
+                var latitude  = location.latitude;
+                var longitude = location.longitude;
+                //MAPチップを画面に追加する
+                _this.addEventMapChip(objectId,iconType,latitude,longitude);
+              }
+              })
+        .catch(function(err){
+               console.log(err);
+               });
         
     };
 };

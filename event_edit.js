@@ -99,8 +99,8 @@ var Page = function( config ){
         
         var lat = parseFloat($("#lat").val());
         var lng = parseFloat($("#lng").val());
-        var iconType  = $("#iconType").val();
-        var eventType = $("#eventType").val();
+        var iconType  = parseInt($("#iconType").val());
+        var eventType = parseInt($("#eventType").val());
         var message   = $("#message").val();
         
         //入力確認
@@ -148,25 +148,6 @@ var Page = function( config ){
         $("#form_container").hide();
     };
     
-    //マーカーで表示
-    this.addMapChip = function(objectId,iconType,latitude,longitude){
-    	var id = ("0"+iconType).slice(-2);
-        var icon_path = this.config.MAP_CHIP_DIR_URL+"e"+id+".png";
-        var size = this.mapChipSize;
-        var center = size/2;
-        var icon = new google.maps.MarkerImage( icon_path, new google.maps.Size(size,size), new google.maps.Point(0,0),new google.maps.Point(center,center));
-        var marker = new google.maps.Marker({position: new google.maps.LatLng(latitude, longitude),map:this.google_map,icon:icon});
-        
-        var _this = this;
-        var fuc = function(e){
-            $.proxy(_this.onMarkerClick,_this)(objectId);
-        };
-        marker.addListener('click',fuc);
-        
-        //描画済みのイベントマーカーを一覧に保存
-        this.markerArr.push( marker );
-    };
-    
     //マーカーをクリックした時
     this.onMarkerClick = function( objectId ){
         //TODO: 詳細を取得して ダイアログ表示して 削除する べき
@@ -184,21 +165,21 @@ var Page = function( config ){
         
         var MapEvent = this.ncmb.DataStore("MapEvent");
         MapEvent.equalTo("objectId", objectId)
-            .fetchAll()
-            .then(function(mapEvents){
-               if(mapEvents.length == 0) return;
-               var mapEvent = mapEvents[0];
-                  var lat = mapEvent.location.latitude;
-                  var lng = mapEvent.location.longitude;
-                  mapEvent.delete()
-                      .then(function(result){
-                                //マップを更新
-                                _this.showMap(lat,lng,_this.range);
-                                $("#form_container").hide();
-                            });
+        .fetchAll()
+        .then(function(mapEvents){
+              if(mapEvents.length == 0) return;
+              var mapEvent = mapEvents[0];
+              var lat = mapEvent.location.latitude;
+              var lng = mapEvent.location.longitude;
+              mapEvent.delete()
+              .then(function(result){
+                    //マップを更新
+                    _this.showMap(lat,lng,_this.range);
+                    $("#form_container").hide();
+                    });
               
               
-               })
+              })
         .catch(function(err){
                console.log(err);
                });
@@ -208,6 +189,25 @@ var Page = function( config ){
     this.clearAllMapChip = function(){
         this.markerArr.forEach(function (marker, idx) { marker.setMap(null); });
         this.markerArr = new google.maps.MVCArray();
+    };
+    
+    //マーカーで表示
+    this.addMapChip = function(objectId,iconType,latitude,longitude){
+    	var id = ("0"+iconType).slice(-2);
+        var icon_path = this.config.MAP_CHIP_DIR_URL+"e"+id+".png";
+        var size = this.mapChipSize;
+        var center = size/2;
+        var icon = new google.maps.MarkerImage( icon_path, new google.maps.Size(size,size), new google.maps.Point(0,0),new google.maps.Point(center,center));
+        var marker = new google.maps.Marker({position: new google.maps.LatLng(latitude, longitude),map:this.google_map,icon:icon});
+        
+        var _this = this;
+        var fuc = function(e){
+            $.proxy(_this.onMarkerClick,_this)(objectId);
+        };
+        marker.addListener('click',fuc);
+        
+        //描画済みのイベントマーカーを一覧に保存
+        this.markerArr.push( marker );
     };
     
     //MAP表示
